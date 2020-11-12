@@ -1,0 +1,29 @@
+% function conduct
+clear all;clc
+ni=13,Tinit=353.15,dx=0.01,dt=0.2,density=8000,conductivity=40;
+cp=500,alfa=2000,Tfluid=293.15,L=0.06;
+%系数与温度初始化
+for k=1:ni % coefficients
+    t(k)=Tinit;
+    told(k)=Tinit;
+    ap(k)=density*cp*dx/dt;
+    ae(k)=conductivity/dx;
+    aw(k)=conductivity/dx;
+    if(k==2);aw(k)=0;end;
+    if(k==ni-1);ae(k)=0;end;
+    d(k)=ap(k)-aw(k)-ae(k);    %
+end;
+time=0;
+for j=1:1610
+    told=t;
+    for k=2:ni-1
+        dd=d(k)*told(k);       %
+        if k==2;
+            dd=d(k)*told(k)+(Tfluid-told(k))/(1/alfa+dx/(2*conductivity));
+        end;
+        t(k)=(ae(k)*told(k+1)+aw(k)*told(k-1)+dd)/ap(k);
+    end
+    t(ni)=t(ni-1);
+    t(1)=(alfa*Tfluid+2*conductivity/dx*t(2))/(alfa+2*conductivity/dx);
+    data(j,1:13)=told;
+end
